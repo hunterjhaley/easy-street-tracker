@@ -113,19 +113,12 @@
   .vcard span{color:var(--muted);display:block}
   .vcard a{color:var(--accent);text-decoration:none}
 
-  /* stack the selections table into cards on a phone */
+  /* selections board rows: same look as items, mirrored to the phase list */
+  li.selrow{display:grid;grid-template-columns:24px 1fr;gap:11px;padding:11px 15px;border-bottom:1px solid var(--line);list-style:none}
+  li.selrow:last-child{border-bottom:none}
+  li.selrow input[type=checkbox]{width:19px;height:19px;margin-top:1px;accent-color:var(--done);cursor:pointer}
+  li.selrow.done .label{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
   @media(max-width:640px){
-    #selections table thead{display:none}
-    #selections table,#selections tbody,#selections tr,#selections td{display:block;width:100%}
-    #selections tr{border-bottom:2px solid var(--line);padding:9px 0 7px}
-    #selections tr:last-child{border-bottom:none}
-    #selections td{border:none;padding:2px 2px 2px 0;display:flex;gap:9px;align-items:baseline}
-    #selections td::before{flex:0 0 68px;font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
-    #selections td:nth-child(1)::before{content:"Item"}
-    #selections td:nth-child(2)::before{content:"Who"}
-    #selections td:nth-child(3)::before{content:"When"}
-    #selections td:nth-child(4)::before{content:"Status"}
-    #selections td:nth-child(1){font-size:14.5px;margin-bottom:2px}
     .snap{gap:8px}
     .tile{padding:10px}
     .cardpad{padding:10px 12px}
@@ -168,7 +161,7 @@
 </div>
 
 <div class="howto now">
-  <b>Where we stand today:</b> framing is complete including both porches and the Trex decks, the fireplace is stoned to the roofline, and the standing seam metal roof is going on right now. The moment the roof is dried in the chain is: plumbing top-out with every valve, then HVAC rough, then spray foam, then the Jack &amp; Jill tub drops into its framed cavity, then drywall. Nothing on that chain is scheduled yet and the fixture selections feed all of it. Exterior stone is waiting on the supplier, and the outdoor kitchen has to be framed before the masons come back.
+  <b>Where we stand today:</b> framing is complete including both porches and the Trex decks, the exterior siding and tongue and groove are installed, exterior paint and stain are done, the fireplace is stoned to the roofline, and the standing seam metal roof is going on right now. The moment the roof is dried in the chain is: plumbing top-out with every valve, then HVAC rough, then spray foam, then the Jack &amp; Jill tub drops into its framed cavity, then drywall. Nothing on that chain is scheduled yet and the fixture selections feed all of it. Exterior stone is waiting on the supplier, and the outdoor kitchen has to be framed before the masons come back.
 </div>
 
 <div id="navanchor" aria-hidden="true"></div>
@@ -327,10 +320,15 @@
       <div class="meta"><span class="trade">Outdoor Kitchen</span><span class="pill wait">Not started</span><span class="who">Munson + Hunter</span><span class="when">With house wainscot</span></div>
       <div class="note">Counter material for the outdoor kitchen is its own selection; fold it into the countertop quote so the fabricator templates once.</div>
     </div></li>
-    <li class="item" data-trade="paint" data-type="build"><input type="checkbox" id="c28"><div>
-      <div class="label">Exterior paint completed (final coat + touch-ups after stone and trim)</div>
-      <div class="meta"><span class="trade">Paint</span><span class="pill prog">Roughly 3/4 done</span><span class="who">Total Effect</span><span class="when">After stone + cedar shakes</span></div>
-      <div class="note">Combined interior + exterior contract $19,957, $5,500 paid 6-12. Hold the exterior finish walk until stone and shakes are in so the caulk lines close everything out.</div>
+    <li class="item done" data-base="1" data-trade="frame" data-type="build"><input type="checkbox" checked id="c33"><div>
+      <div class="label">Exterior siding and tongue and groove installed (board and batten Hardie + T&amp;G)</div>
+      <div class="meta"><span class="trade">Siding</span><span class="pill done">Done</span><span class="who">Ramos</span></div>
+      <div class="note">Cornice and siding labor was inside the Ramos contract ($8,200 of the $32,588). Porch T&amp;G ceiling was the separate $2,300 add paid 6-18.</div>
+    </div></li>
+    <li class="item done" data-base="1" data-trade="paint" data-type="build"><input type="checkbox" checked id="c28"><div>
+      <div class="label">Exterior paint and stain complete</div>
+      <div class="meta"><span class="trade">Paint</span><span class="pill done">Done</span><span class="who">Total Effect</span></div>
+      <div class="note">Combined interior and exterior contract $19,957, $5,500 paid 6-12. <b>Expect a touch-up pass after the stone and cedar shakes go on</b> so the caulk lines close out clean; hold a little retainage against that.</div>
     </div></li>
     <li class="item" data-trade="door" data-type="order build"><input type="checkbox" id="c29"><div>
       <div class="label">Front door received and installed (knotty alder double, 4-lite SDL)</div>
@@ -472,10 +470,10 @@
       <div class="meta"><span class="trade">Cabinets</span><span class="pill crit">Long lead</span><span class="pill dec">Selection</span><span class="who">Deanne designs · Stacey pushes Caleb · Hunter orders</span><span class="when">Order by drywall start</span></div>
       <div class="note">Verify every appliance cutout against the 7-9-26 appliance schedule before fabrication (36&quot; fridge, 36&quot; cooktop, wall oven, dishwasher, microwave drawer, beverage center, freezer, washer and dryer surround). Confirm whether bath vanities are inside the $40K or separate ($7,000 budget line).</div>
     </div></li>
-    <li class="item" data-trade="paint" data-type="pick"><input type="checkbox" id="c72"><div>
-      <div class="label">Stain color for T&amp;G, beams, and built-ins (samples: Rustic #116, Cedar Tone #101)</div>
-      <div class="meta"><span class="trade">Stain</span><span class="pill dec">Selection</span><span class="who">Deanne</span><span class="when">Now, porch T&amp;G is already up bare</span></div>
-      <div class="note">This also settles the open question of whether Total Effect's contract covers stain on the wood or only paint. Get that answered in writing before interior paint starts.</div>
+    <li class="item done" data-base="1" data-trade="paint" data-type="pick"><input type="checkbox" checked id="c72"><div>
+      <div class="label">Stain color picked and exterior wood stained</div>
+      <div class="meta"><span class="trade">Stain</span><span class="pill done">Done outside</span><span class="who">Deanne picked · Total Effect applied</span></div>
+      <div class="note"><b>Confirm the interior carries the same color</b> on the beams, wood ceilings, and built-ins Pine View or Caleb installs, and get it in writing that Total Effect's contract covers staining that wood rather than paint only. If Deanne wants a different tone inside, that is a new decision.</div>
     </div></li>
     <li class="item" data-trade="door" data-type="order"><input type="checkbox" id="c73"><div>
       <div class="label">Interior doors received (18 units, 3-panel shaker) + antique doors and transoms staged</div>
@@ -500,6 +498,11 @@
       <div class="label">Tile: select bath floors, shower walls, J&amp;J tub surround, backsplash, then order and line up the setter</div>
       <div class="meta"><span class="trade">Tile</span><span class="pill crit">Critical</span><span class="pill dec">Selection</span><span class="who">Deanne picks · Hunter orders · Stacey books setter</span><span class="when">Select by drywall complete</span></div>
       <div class="note">$14,000 budget, no bid yet. The Jack &amp; Jill tub surround is the schedule driver, since that bathroom cannot finish without it.</div>
+    </div></li>
+    <li class="item" data-trade="floor" data-type="pick"><input type="checkbox" id="c82"><div>
+      <div class="label">Decide carpet vs wood in the bedrooms</div>
+      <div class="meta"><span class="trade">Flooring</span><span class="pill dec">Selection</span><span class="who">Deanne</span><span class="when">With the flooring order</span></div>
+      <div class="note">$6,000 carpet budget line is sitting unused. Decide before the flooring order so the quantities are right.</div>
     </div></li>
     <li class="item" data-trade="cab" data-type="pick order sched"><input type="checkbox" id="c78"><div>
       <div class="label">Countertops: quote, template after cabinets set, install (include the outdoor kitchen tops)</div>
@@ -631,34 +634,29 @@
 <!-- ===== SELECTIONS BOARD ===== -->
 <section class="phase" id="selections">
   <div class="phead"><div class="tog">+</div><div class="ptext">
-    <h2>Selections Board: everything Deanne still picks <span class="count"></span></h2>
-    <div class="gate">One place, sorted by deadline. The deadline is the point where not having it starts costing schedule.</div>
+    <h2>Selections &amp; Ordering Board <span class="count"></span></h2>
+    <div class="gate">Every pick and every purchase in one place, sorted by deadline. Check one off here and it checks itself off in the phase list too, so nobody has to look in two spots.</div>
   </div></div>
-  <div class="pbody"><div class="cardpad" style="overflow-x:auto">
-    <table>
-      <thead><tr><th>Selection</th><th>Who</th><th>Deadline</th><th>Status</th></tr></thead>
-      <tbody>
-        <tr><td><b>Shower and tub valves + trim kits</b> (all baths)</td><td>Deanne picks · Hunter orders</td><td><b>NOW</b>, before top-out</td><td>Not picked</td></tr>
-        <tr><td><b>Jack &amp; Jill drop-in tub</b></td><td>Deanne picks · Hunter orders</td><td><b>NOW</b>, on site by the end of foam</td><td>Not picked</td></tr>
-        <tr><td><b>Master freestanding tub + floor filler</b></td><td>Deanne</td><td><b>NOW</b>, drain set at top-out</td><td>Not picked</td></tr>
-        <tr><td><b>Outdoor kitchen appliances</b></td><td>Hunter</td><td><b>NOW</b>, cutouts and stone date depend on it</td><td>Not ordered</td></tr>
-        <tr><td><b>Stain color</b> for T&amp;G and beams</td><td>Deanne</td><td>Now, porch wood is up bare</td><td>Samples in hand</td></tr>
-        <tr><td><b>Handrail design</b> (wood vs metal)</td><td>Deanne + Hunter</td><td>Now if metal, for fab lead time</td><td>Not picked</td></tr>
-        <tr><td><b>Garage overhead doors</b></td><td>Deanne + Hunter</td><td>Order by drywall</td><td>Not bid</td></tr>
-        <tr><td><b>Cabinet design + shop drawings</b></td><td>Deanne + Caleb</td><td>Order by drywall start</td><td>Verbal only</td></tr>
-        <tr><td><b>Interior paint colors</b> (2 in contract)</td><td>Deanne</td><td>By end of drywall</td><td>Not picked</td></tr>
-        <tr><td><b>Flooring product</b> (confirm engineered wood)</td><td>Deanne + Hunter</td><td>Order by drywall complete</td><td>Not picked</td></tr>
-        <tr><td><b>Tile</b> (baths, J&amp;J surround, backsplash)</td><td>Deanne</td><td>By drywall complete</td><td>Not picked</td></tr>
-        <tr><td><b>Carpet vs wood in bedrooms</b></td><td>Deanne</td><td>With the flooring order</td><td>Open</td></tr>
-        <tr><td><b>Door hardware, knobs, pulls</b></td><td>Deanne</td><td>Order by trim start</td><td>Not picked</td></tr>
-        <tr><td><b>Countertop slabs</b> (kitchen, baths, outdoor)</td><td>Deanne</td><td>At cabinet order</td><td>Not picked</td></tr>
-        <tr><td><b>Decorative lighting</b> (fans, pendants, vanity)</td><td>Deanne</td><td>Order by electrical trim</td><td>Not picked</td></tr>
-        <tr><td><b>Toilets, lav faucets, kitchen faucet, farm sink</b></td><td>Deanne</td><td>Sink before counter template</td><td>Not picked</td></tr>
-        <tr><td><b>Gutter color</b></td><td>Hunter</td><td>At roof completion</td><td>Not picked</td></tr>
-        <tr><td><b>Shower glass</b></td><td>Deanne</td><td>Measure after tile</td><td>Later</td></tr>
-      </tbody>
-    </table>
-  </div></div>
+  <div class="pbody"><ul class="items sellist">
+    <li class="selrow" data-link="c1" data-trade="plumb"><input type="checkbox" id="sel_c1"><div><div class="label">Shower and tub valves + trim kits</div><div class="meta"><span class="who">All baths. Deanne picks, Hunter orders</span><span class="when">NOW, before top-out</span></div></div></li>
+    <li class="selrow" data-link="c2" data-trade="plumb"><input type="checkbox" id="sel_c2"><div><div class="label">Jack &amp; Jill drop-in tub</div><div class="meta"><span class="who">Deanne picks, Hunter orders</span><span class="when">NOW, on site by the end of foam</span></div></div></li>
+    <li class="selrow" data-link="c3" data-trade="plumb"><input type="checkbox" id="sel_c3"><div><div class="label">Master freestanding tub + floor filler</div><div class="meta"><span class="who">Deanne</span><span class="when">NOW, drain is set at top-out</span></div></div></li>
+    <li class="selrow" data-link="c8" data-trade="outdoor"><input type="checkbox" id="sel_c8"><div><div class="label">Outdoor kitchen appliances</div><div class="meta"><span class="who">Hunter</span><span class="when">NOW, cutouts and stone date depend on it</span></div></div></li>
+    <li class="selrow" data-link="c11" data-trade="frame"><input type="checkbox" id="sel_c11"><div><div class="label">Handrail design, wood vs metal</div><div class="meta"><span class="who">Deanne + Hunter</span><span class="when">Now if metal, for fab lead time</span></div></div></li>
+    <li class="selrow" data-link="c30" data-trade="door"><input type="checkbox" id="sel_c30"><div><div class="label">Garage overhead doors</div><div class="meta"><span class="who">Stacey gets bids, Hunter orders</span><span class="when">Order by drywall, 3-6 week lead</span></div></div></li>
+    <li class="selrow" data-link="c71" data-trade="cab"><input type="checkbox" id="sel_c71"><div><div class="label">Cabinet design + shop drawings</div><div class="meta"><span class="who">Deanne designs, Hunter orders</span><span class="when">Order by drywall start</span></div></div></li>
+    <li class="selrow" data-link="c75" data-trade="paint"><input type="checkbox" id="sel_c75"><div><div class="label">Interior paint colors, 2 in contract</div><div class="meta"><span class="who">Deanne</span><span class="when">By end of drywall</span></div></div></li>
+    <li class="selrow" data-link="c76" data-trade="floor"><input type="checkbox" id="sel_c76"><div><div class="label">Flooring product, confirm engineered wood</div><div class="meta"><span class="who">Deanne picks, Hunter orders</span><span class="when">Order by drywall complete</span></div></div></li>
+    <li class="selrow" data-link="c77" data-trade="floor"><input type="checkbox" id="sel_c77"><div><div class="label">Tile: baths, J&amp;J surround, backsplash</div><div class="meta"><span class="who">Deanne picks, Hunter orders</span><span class="when">By drywall complete</span></div></div></li>
+    <li class="selrow" data-link="c82" data-trade="floor"><input type="checkbox" id="sel_c82"><div><div class="label">Carpet vs wood in the bedrooms</div><div class="meta"><span class="who">Deanne</span><span class="when">With the flooring order</span></div></div></li>
+    <li class="selrow" data-link="c79" data-trade="door"><input type="checkbox" id="sel_c79"><div><div class="label">Door hardware: knobs, levers, pulls</div><div class="meta"><span class="who">Deanne picks, Hunter orders</span><span class="when">Order by trim start</span></div></div></li>
+    <li class="selrow" data-link="c78" data-trade="cab"><input type="checkbox" id="sel_c78"><div><div class="label">Countertop slabs: kitchen, baths, outdoor</div><div class="meta"><span class="who">Deanne + Hunter</span><span class="when">At cabinet order</span></div></div></li>
+    <li class="selrow" data-link="c92" data-trade="elec"><input type="checkbox" id="sel_c92"><div><div class="label">Decorative lighting: fans, pendants, vanity</div><div class="meta"><span class="who">Deanne picks, Hunter orders</span><span class="when">Order by electrical trim</span></div></div></li>
+    <li class="selrow" data-link="c93" data-trade="plumb"><input type="checkbox" id="sel_c93"><div><div class="label">Toilets, lav faucets, kitchen faucet, farm sink</div><div class="meta"><span class="who">Deanne</span><span class="when">Farm sink before counter template</span></div></div></li>
+    <li class="selrow" data-link="c31" data-trade="roof"><input type="checkbox" id="sel_c31"><div><div class="label">Gutter color</div><div class="meta"><span class="who">Hunter</span><span class="when">At roof completion</span></div></div></li>
+    <li class="selrow" data-link="c97" data-trade="door"><input type="checkbox" id="sel_c97"><div><div class="label">Shower glass</div><div class="meta"><span class="who">Deanne</span><span class="when">Measure after tile</span></div></div></li>
+    <li class="selrow" data-link="c72" data-trade="paint"><input type="checkbox" id="sel_c72"><div><div class="label">Stain color for wood</div><div class="meta"><span class="who">Deanne</span><span class="when">Picked, exterior applied</span></div></div></li>
+  </ul></div>
 </section>
 
 <!-- ===== MONEY ===== -->
@@ -750,6 +748,7 @@
 <script>
 (function(){
   var items = [].slice.call(document.querySelectorAll('li.item'));
+  var selrows = [].slice.call(document.querySelectorAll('li.selrow'));
   var sections = [].slice.call(document.querySelectorAll('section.phase'));
   var view = 'all', trade = 'all';
 
@@ -764,8 +763,20 @@
     paint:'Paint & Stain', outdoor:'Outdoor Kitchen', appl:'Appliances',
     site:'Site, Septic & Yard', money:'Money & Draws'
   };
-  // sections with no checkable items, and when they should still appear
-  var SPECIAL = { selections:'pick', money:'money', contacts:null };
+  // sections with no phase items of their own, and when they should still appear
+  var SPECIAL = { money:'money', contacts:null };
+
+  // keep each board row and its phase item in lockstep
+  function linkedItem(row){ return document.getElementById(row.dataset.link); }
+  selrows.forEach(function(row){
+    var box = row.querySelector('input');
+    var src = linkedItem(row);
+    if(src){
+      box.checked = src.checked;
+      box.addEventListener('change', function(){ src.checked = box.checked; apply(); });
+      src.addEventListener('change', function(){ box.checked = src.checked; apply(); });
+    }
+  });
 
   function isDone(li){ return li.querySelector('input').checked; }
   function types(li){ return (li.dataset.type||'').split(/\s+/); }
@@ -791,7 +802,30 @@
 
     var filtering = (view!=='all' || trade!=='all');
 
+    // board rows mirror their phase item, then filter on their own
+    selrows.forEach(function(row){
+      var box = row.querySelector('input');
+      var src = linkedItem(row);
+      if(src) box.checked = src.checked;
+      row.classList.toggle('done', box.checked);
+      var show = true;
+      if(trade!=='all') show = (row.dataset.trade||'').split(/\s+/).indexOf(trade)>-1;
+      if(show && view==='done') show = box.checked;
+      else if(show && (view==='open'||view==='today'||view==='order'||view==='pick'||view==='sched')) show = !box.checked;
+      row.classList.toggle('hidden', !show);
+    });
+    var selSec = document.getElementById('selections');
+    var selVis = selSec.querySelectorAll('li.selrow:not(.hidden)').length;
+    selSec.classList.toggle('hidden', selVis===0);
+    var selBadge = selSec.querySelector('.count');
+    if(selBadge){
+      var selDone = selrows.filter(function(r){return r.querySelector('input').checked;}).length;
+      selBadge.textContent = filtering ? (selVis+' shown') : (selDone+' of '+selrows.length+' done');
+    }
+    if(filtering && selVis>0) selSec.classList.add('open');
+
     sections.forEach(function(sec){
+      if(sec.id==='selections') return;
       var lis = sec.querySelectorAll('li.item');
       var badge = sec.querySelector('.count');
       if(!lis.length){
