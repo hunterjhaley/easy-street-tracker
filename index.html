@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>327 Easy Street - Build Tracker</title>
+<style>
+  :root{
+    --bg:#f7f6f3; --card:#ffffff; --ink:#1c1917; --muted:#6b6660; --line:#e5e2dc;
+    --accent:#1d4ed8; --done:#15803d; --wait:#b45309; --crit:#b91c1c; --dec:#7c3aed;
+    --pill-bg:#f1efeb; --head:#292524;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#171512; --card:#211e1a; --ink:#ece9e4; --muted:#a39d94; --line:#3a352f;
+      --accent:#7ea2ff; --done:#5cc281; --wait:#e0a04c; --crit:#f07f74; --dec:#bda3f2;
+      --pill-bg:#2c2823; --head:#f4f1ec;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:20px 16px 80px}
+  header.top{padding:26px 0 10px}
+  h1{font-size:26px;margin:0 0 2px;color:var(--head);letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:14px}
+  .updated{display:inline-block;margin-top:8px;font-size:12.5px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:3px 10px;background:var(--card)}
+  .progressbar{height:10px;border-radius:99px;background:var(--pill-bg);margin:16px 0 4px;overflow:hidden;border:1px solid var(--line)}
+  .progressbar>div{height:100%;background:var(--done);width:0%;transition:width .4s}
+  .progresslabel{font-size:12.5px;color:var(--muted)}
+  .howto{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px 14px;margin:16px 0;font-size:14px}
+  .howto b{color:var(--head)}
+  nav.filters{position:sticky;top:0;z-index:50;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:5px 13px;font-size:13px;cursor:pointer}
+  .chip.active{background:var(--head);color:var(--bg);border-color:var(--head)}
+  .chip.copybtn{margin-left:auto;border-color:var(--accent);color:var(--accent);font-weight:600}
+  section.phase{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:18px 0;overflow:hidden}
+  section.phase>.phead{padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+  .phead h2{margin:0;font-size:17.5px;color:var(--head);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .phead .count{font-size:12.5px;color:var(--muted);font-weight:400}
+  .phead .gate{margin-top:3px;font-size:13px;color:var(--muted)}
+  .phead .gate b{color:var(--crit);font-weight:600}
+  ul.items{list-style:none;margin:0;padding:4px 0}
+  li.item{display:grid;grid-template-columns:26px 1fr;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line)}
+  li.item:last-child{border-bottom:none}
+  li.item.done .label{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+  li.item input[type=checkbox]{width:17px;height:17px;margin-top:2px;accent-color:var(--done);cursor:pointer}
+  .label{font-size:14.5px;color:var(--ink);font-weight:550}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;align-items:center}
+  .pill{font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:700;border-radius:5px;padding:2px 7px;background:var(--pill-bg);color:var(--muted)}
+  .pill.done{color:var(--done)} .pill.prog{color:var(--accent)} .pill.wait{color:var(--wait)}
+  .pill.crit{color:#fff;background:var(--crit)} .pill.dec{color:var(--dec)} .pill.sched{color:var(--accent)}
+  .who{font-size:11.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1.5px 6px}
+  .when{font-size:11.5px;color:var(--wait);font-weight:600}
+  .note{margin-top:4px;font-size:13px;color:var(--muted)}
+  .note b{color:var(--ink);font-weight:600}
+  /* money + selections + contacts */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{text-align:left;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--line)}
+  td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.total td{font-weight:700;color:var(--head)}
+  .cardpad{padding:14px 16px}
+  .contacts{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;padding:14px 16px}
+  .vcard{border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:13px}
+  .vcard b{display:block;font-size:13.5px;color:var(--head)}
+  .vcard span{color:var(--muted);display:block}
+  footer{margin-top:30px;font-size:12.5px;color:var(--muted);text-align:center}
+  .hidden{display:none!important}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--head);color:var(--bg);border-radius:9px;padding:10px 18px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:99}
+  .toast.show{opacity:1}
+  @media print{
+    nav.filters,.copybtn,.toast{display:none!important}
+    body{background:#fff;color:#000;font-size:12px}
+    section.phase{break-inside:avoid;border-color:#ccc}
+    .wrap{max-width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>327 Easy Street - Build Tracker</h1>
+  <div class="sub">New residence for Deanne McGaha · Livingston, TX 77351 · Stacey runs the field · Hunter runs orders, money, and this list · Deanne makes the selections</div>
+  <span class="updated">Last updated: Monday, July 28, 2026 · Hunter owns this list</span>
+  <div class="progressbar"><div id="pbar"></div></div>
+  <div class="progresslabel" id="plabel"></div>
+</header>
+
+<div class="howto">
+  <b>How this works:</b> Stacey runs the field: finding subs, lining them up, keeping crews scheduled. Hunter runs the background: ordering, keeping material on hand, money, paperwork, and this master list, so Stacey has everything he needs before it hits the field. Deanne makes the selections. When you finish something or learn something, check it off here or just text Hunter ("valves ordered", "foam scheduled Thursday"), and he updates the master and re-sends the link to everybody. Checkmarks you click are scratch notes for your own session; the saved file is the source of truth. The <b>Copy My Updates</b> button copies your changes as a text message you can send straight to Hunter.
+</div>
+
+<div class="howto" style="border-left-color:var(--crit)">
+  <b>Where we are (7-28-26):</b> Framing is complete including both porches and Trex decks. The masonry fireplace is stoned to the roofline. The standing seam metal roof is being installed right now. The moment the roof is dried in, the sequence is: plumbing top-out with every valve and the guest tub set, then HVAC rough, then spray foam, then drywall. Nothing on that chain is scheduled yet and the fixture selections feed all of it, so Section 1 is the whole ballgame this week. Exterior stone (Granbury Chop) is awaited from the supplier; the outdoor kitchen must be framed before the masons wrap the house.
+</div>
+
+<nav class="filters" id="filters">
+  <button class="chip active" data-filter="all">All</button>
+  <button class="chip" data-filter="open">Open</button>
+  <button class="chip" data-filter="done">Done</button>
+  <button class="chip" data-filter="crit">Critical path</button>
+  <button class="chip copybtn" id="copyupdates">Copy My Updates</button>
+</nav>
+
+<!-- ============ SECTION 1: CRITICAL THIS WEEK ============ -->
+<section class="phase" id="s1">
+  <div class="phead">
+    <h2>1 · Do Now, This Week <span class="count"></span></h2>
+    <div class="gate"><b>Gate:</b> roof dry-in is days away and spray foam follows right behind it. Every item here either feeds the foam date or blocks the stone masons.</div>
+  </div>
+  <ul class="items">
+    <li class="item" data-crit="1"><input type="checkbox" id="c1"><div>
+      <div class="label">Pick every plumbing fixture that has a rough-in valve, and order the valve bodies</div>
+      <div class="meta"><span class="pill crit">Critical</span><span class="pill dec">Decision</span><span class="who">Deanne picks · Hunter orders</span><span class="when">Before plumbing top-out</span></div>
+      <div class="note">Master shower valve and trim, Jack &amp; Jill tub/shower valve, master freestanding tub filler (floor-mount rough), any secondary shower. <b>Order the complete valve and trim kit together, rough-in valve body and trim, not trim only.</b> The valve bodies are what Eddie needs in hand; trim can arrive later.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c2"><div>
+      <div class="label">Buy the Jack &amp; Jill bathtub (drop-in with tile surround)</div>
+      <div class="meta"><span class="pill crit">Critical</span><span class="pill wait">Not ordered</span><span class="who">Deanne picks · Hunter orders</span><span class="when">On site before spray foam</span></div>
+      <div class="note">This tub gets set during top-out, before foam and drywall, because the surround gets framed and tiled around it. Pick size against the plan opening, confirm left vs right drain, and buy locally if lead time is long.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c3"><div>
+      <div class="label">Pick the master freestanding tub model (spec now, deliver later)</div>
+      <div class="meta"><span class="pill crit">Critical</span><span class="pill dec">Decision</span><span class="who">Deanne</span><span class="when">Spec before top-out</span></div>
+      <div class="note">The tub itself is not needed before drywall, but its <b>drain location and the floor-mounted filler rough-in are set at top-out</b> and cannot move after the slab penetration is committed. Lock the model or at least the drain/filler geometry now.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c4"><div>
+      <div class="label">Contract Eddie Cross for the next rough + gas stub + fixture set ($9,160) and get a top-out date</div>
+      <div class="meta"><span class="pill crit">Critical</span><span class="pill wait">Quoted only</span><span class="who">Hunter locks scope · Stacey schedules</span><span class="when">Schedule for roof completion</span></div>
+      <div class="note">Quote from 5-8-26: next rough $5,440 + gas stub-out for the range $1,000 + set fixtures $2,720. This was never signed, which is why the valve chain stalled. Confirm the outdoor kitchen sink water line and grill gas stub while he is mobilized.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c5"><div>
+      <div class="label">Schedule Ferrara's HVAC rough-in (signed 5-18, $26,600, no deposit paid yet)</div>
+      <div class="meta"><span class="pill crit">Critical</span><span class="pill wait">Not scheduled</span><span class="who">Stacey schedules · Hunter watches for deposit invoice</span><span class="when">After roof, before foam</span></div>
+      <div class="note">Michael Lewis (936) 639-5259. Trane 18 SEER2 inverter, electric heat, dehumidifier, zoning, and he vents the dryer, hood, and bath fans, so the 7 bath fans on site need to be at the house for his crew. Watch for his deposit invoice.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c6"><div>
+      <div class="label">Book Foam Fitters and decide the add-ons before they mobilize</div>
+      <div class="meta"><span class="pill crit">Critical</span><span class="pill wait">Awarded, not scheduled</span><span class="who">Stacey schedules · Hunter decides add-ons</span><span class="when">Right after HVAC + plumbing top-out</span></div>
+      <div class="note">Base $7,479 awarded 5-19. Add-on decisions: garage roof $1,023.59, garage walls $488.58, interior sound walls $315.97, cold floor $529.30. Kenneth (936) 494-8595. Site must be clear or a $500 mobilization fee applies.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c7"><div>
+      <div class="label">Frame the outdoor kitchen per the REV2 drawings (7-15-26)</div>
+      <div class="meta"><span class="pill crit">Critical</span><span class="pill dec">Decide who builds it</span><span class="who">Stacey lines up the builder</span><span class="when">Before masons return</span></div>
+      <div class="note">L-shape, 2x4 studs + 1/2&quot; Hardie + stone veneer, 36&quot; counter, grill bay Hardie-lined. Stone crew stones it when they do the house wainscot, so the frame has to be standing first. Candidates: Ramos as add-on scope, or Caleb Ellison. Confirm the Bull appliance cutouts before cutting (fridge frame 24-3/8 x 33-1/4, grill 31 x 21, combo unit, towel drawer 14-1/2 x 8-1/2).</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c8"><div>
+      <div class="label">Order the outdoor kitchen appliances (Bull units per drawings)</div>
+      <div class="meta"><span class="pill crit">Critical</span><span class="pill wait">Not ordered</span><span class="who">Hunter</span><span class="when">Now, cutouts depend on them</span></div>
+      <div class="note">Drawings assume specific units: fridge with 27&quot; finishing frame (item 13910), drop-in grill (31 x 21 cutout), 3-drawer/door combo (item 25900), towel drawer, sink for the 42&quot; return wall. No order or receipt is on file for any of these. Ordering now protects the framing dimensions and the stone date.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c9"><div>
+      <div class="label">Get the stone delivery date from Wayne Munson / Allstate Brick</div>
+      <div class="meta"><span class="pill wait">Waiting on supplier</span><span class="who">Stacey chases it</span><span class="when">This week</span></div>
+      <div class="note">Granbury Chop, 1,950 SF flats + 220 LF corners, $17,006.08 material contract, $2,500 material draw paid 7-2. Fireplace is done to the roof; the house wainscot and columns wait on this delivery plus the outdoor kitchen frame.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c10"><div>
+      <div class="label">Walk the roof at completion, then release the 40% balance ($18,800) to Distinctive</div>
+      <div class="meta"><span class="pill prog">In progress</span><span class="who">Stacey walks it · Hunter pays</span><span class="when">At roof completion</span></div>
+      <div class="note">Standing seam bronze, $47,000 total, 60% ($28,225) paid 5-14. Check flashings, the chimney interface at the new masonry, and penetrations for the tankless vents and range hood before paying. Pam Pinkerton 817-560-6679.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c11"><div>
+      <div class="label">Decide porch handrail design and who builds it</div>
+      <div class="meta"><span class="pill dec">Decision</span><span class="who">Deanne + Hunter design · Stacey finds builder</span><span class="when">Design now, install with exterior finish</span></div>
+      <div class="note">Front and back porches need rails. Nothing bid yet ($5,000 budget line). Ramos (built the decks) is the natural first call; metal rail would be a separate fabricator with real lead time, so the material decision drives the clock.</div>
+    </div></li>
+  </ul>
+</section>
+
+<!-- ============ SECTION 2: DRY-IN & EXTERIOR SHELL ============ -->
+<section class="phase" id="s2">
+  <div class="phead">
+    <h2>2 · Dry-In &amp; Exterior Shell <span class="count"></span></h2>
+    <div class="gate">Roof, stone, siding, exterior doors. <b>Gate:</b> outdoor kitchen framed before the stone crew returns; roof done before foam.</div>
+  </div>
+  <ul class="items">
+    <li class="item done" data-base="1"><input type="checkbox" checked id="c20"><div>
+      <div class="label">Framing complete: house, cornice, roof deck, both porches, Trex decks, front porch rebuild</div>
+      <div class="meta"><span class="pill done">Done</span><span class="who">Ramos</span></div>
+      <div class="note">Ramos contract $32,588; $24,000 paid through Draw 3, <b>$8,588 balance still due</b>. T&amp;G porch ceiling install was a separate $2,300 add, paid 6-18.</div>
+    </div></li>
+    <li class="item done" data-base="1"><input type="checkbox" checked id="c21"><div>
+      <div class="label">Windows installed (21 Showcase units, bronze on bronze) + 2 obscure panes swapped to clear</div>
+      <div class="meta"><span class="pill done">Done</span><span class="who">Tri-Supply</span></div>
+    </div></li>
+    <li class="item done" data-base="1"><input type="checkbox" checked id="c22"><div>
+      <div class="label">Panoramic 5-panel door system + screen installed (C&amp;H, paid in full)</div>
+      <div class="meta"><span class="pill done">Done</span><span class="who">C&amp;H American</span></div>
+      <div class="note">Reminder that came with it: no expanding foam around the Panoramic frame, it voids the factory warranty. Make sure the foam crew knows.</div>
+    </div></li>
+    <li class="item done" data-base="1"><input type="checkbox" checked id="c23"><div>
+      <div class="label">Fireplace masonry to the roofline</div>
+      <div class="meta"><span class="pill done">Done</span><span class="who">Wayne Munson</span></div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c24"><div>
+      <div class="label">Standing seam metal roof installed, flashed, and complete</div>
+      <div class="meta"><span class="pill prog">In progress now</span><span class="who">Distinctive</span><span class="when">This week</span></div>
+      <div class="note">Chimney cap / crown detail at the new masonry chimney needs an owner on it: confirm whether Distinctive or Munson closes the top so water never sees the flue.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c25"><div>
+      <div class="label">Cedar shake gable accents installed</div>
+      <div class="meta"><span class="pill wait">Material on site</span><span class="who">Stacey assigns</span><span class="when">With roof / cornice work</span></div>
+      <div class="note">Shakes bought 6-29 ($361.88 Red Barn). Confirm who is installing, likely Ramos while cornice equipment is around.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c26"><div>
+      <div class="label">Exterior stone: house wainscot + columns</div>
+      <div class="meta"><span class="pill wait">Waiting on stone + OK frame</span><span class="who">Wayne Munson</span><span class="when">After roof + outdoor kitchen frame</span></div>
+      <div class="note">Labor contract $36,050 (includes wire, cement, sand, staples). Combined stone commitment $53,056.08 with $2,500 paid, so roughly <b>$50,556 rides on this scope</b>, expect draws.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c27"><div>
+      <div class="label">Outdoor kitchen stoned + counters decided</div>
+      <div class="meta"><span class="pill wait">Not started</span><span class="who">Munson + Hunter</span><span class="when">With house wainscot</span></div>
+      <div class="note">Counter material for the outdoor kitchen (stone/concrete/granite) is its own selection; fold it into the countertop quote so it templates once.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c28"><div>
+      <div class="label">Exterior paint completed (final coat + touch-ups after stone and trim)</div>
+      <div class="meta"><span class="pill prog">Roughly 3/4 done</span><span class="who">Total Effect</span><span class="when">After stone + cedar shakes</span></div>
+      <div class="note">Combined int + ext contract $19,957, $5,500 paid 6-12. Hold the exterior finish walk until stone and shakes are in so caulk lines close everything out.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c29"><div>
+      <div class="label">Front door received and installed (knotty alder double, 4-lite SDL)</div>
+      <div class="meta"><span class="pill wait">Ordered 6-22, paid</span><span class="who">Hunter tracks ETA · Stacey lines up installer</span><span class="when">Check ETA with Culpepper</span></div>
+      <div class="note">$2,489.74 paid. Decide installer (trim carpenter or C&amp;H). The temp construction double door ($649.49) holds the opening until then. Two more construction doors were discussed and <b>not ordered</b>, close that loop if still wanted.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c30"><div>
+      <div class="label">Garage overhead doors: pick, order, install</div>
+      <div class="meta"><span class="pill crit">Not even bid</span><span class="pill dec">Decision</span><span class="who">Stacey gets bids · Hunter orders</span><span class="when">Order by drywall, 3-6 week lead</span></div>
+      <div class="note">No quote, no order, no budget line carrying it anywhere in the file. The house is not lockable until these hang. Get 2 quotes (door + opener + install).</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c31"><div>
+      <div class="label">Gutters: decide scope and bid</div>
+      <div class="meta"><span class="pill dec">Decision</span><span class="who">Stacey bids it · Hunter picks color</span><span class="when">After roof, before landscaping</span></div>
+      <div class="note">$2,000 accessories budget. Seamless gutter subs usually want the roof and fascia final. Color pick rides the roof bronze.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c32"><div>
+      <div class="label">Porch handrails built and installed (front + back)</div>
+      <div class="meta"><span class="pill wait">Blocked by design decision</span><span class="who">TBD</span><span class="when">With exterior finish</span></div>
+    </div></li>
+  </ul>
+</section>
+
+<!-- ============ SECTION 3: ROUGH-INS, EVERYTHING BEFORE FOAM ============ -->
+<section class="phase" id="s3">
+  <div class="phead">
+    <h2>3 · Rough-Ins <span class="count"></span></h2>
+    <div class="gate"><b>Hard gate:</b> every single item below is buried by spray foam or drywall. Nothing gets foamed until this section reads 100%.</div>
+  </div>
+  <ul class="items">
+    <li class="item done" data-base="1"><input type="checkbox" checked id="c40"><div>
+      <div class="label">Plumbing slab rough-in</div>
+      <div class="meta"><span class="pill done">Done</span><span class="who">Eddie Cross</span></div>
+      <div class="note">$5,440 paid (Check 122).</div>
+    </div></li>
+    <li class="item done" data-base="1"><input type="checkbox" checked id="c41"><div>
+      <div class="label">Electrical rough-in complete</div>
+      <div class="meta"><span class="pill done">Done</span><span class="who">Joseph Electric</span></div>
+      <div class="note">$16,981 paid 5-18 (includes confirmed extra scope; updated invoice from Joseph still owed to the file).</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c42"><div>
+      <div class="label">Plumbing top-out: valves set, gas stub run, water heater location roughed</div>
+      <div class="meta"><span class="pill crit">Blocked: contract + valves</span><span class="who">Eddie Cross</span><span class="when">Immediately after roof</span></div>
+      <div class="note">Needs the signed $9,160 scope and the valve bodies on site. Include: range gas stub, Rheem RTEX-27 tankless location, outdoor kitchen sink line + grill gas if being run.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c43"><div>
+      <div class="label">Jack &amp; Jill tub set in place</div>
+      <div class="meta"><span class="pill crit">Blocked: tub purchase</span><span class="who">Eddie Cross</span><span class="when">At top-out, before foam</span></div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c44"><div>
+      <div class="label">Freestanding tub drain + floor-mounted filler roughed at exact spec</div>
+      <div class="meta"><span class="pill crit">Blocked: model spec</span><span class="who">Eddie Cross</span><span class="when">At top-out</span></div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c45"><div>
+      <div class="label">HVAC rough: ducts, trunklines, zoning, dehumidifier, dryer/hood/bath fan venting</div>
+      <div class="meta"><span class="pill crit">Blocked: scheduling</span><span class="who">Ferrara's</span><span class="when">After roof, before foam</span></div>
+      <div class="note">All 7 bath/vent fans are owner-supplied and on hand, get them to the site. Roof penetrations coordinate with Distinctive while they are still reachable.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c46"><div>
+      <div class="label">In-wall safe: frame the cavity + power stub where it lands</div>
+      <div class="meta"><span class="pill wait">Safe on site (ordered 6-15)</span><span class="who">Hunter places it · Stacey + Joseph execute</span><span class="when">Before foam/drywall</span></div>
+      <div class="note">AMSEC WFS149E5LP fits between studs; pick the wall now and get blocking in. Quiet item that becomes a wall-tearout if it slips.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c47"><div>
+      <div class="label">TV locations: backing/blocking + power/conduit (55&quot; Frame Pro bought)</div>
+      <div class="meta"><span class="pill wait">Decide locations</span><span class="who">Hunter decides locations · Stacey + Joseph</span><span class="when">Before drywall</span></div>
+      <div class="note">Any other low-voltage wants (network drops, speakers, cameras) go in now too. After foam, pulling wire gets ugly.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c48"><div>
+      <div class="label">Garage attic lift: confirm delivery, frame the ceiling opening, blocking + circuit</div>
+      <div class="meta"><span class="pill wait">Ordered 6-22 ($3,718.38)</span><span class="who">Hunter tracks delivery · Stacey + Ramos/Joseph</span><span class="when">Before garage drywall/foam decision</span></div>
+      <div class="note">Auxx-Lift premium, 28.75 x 56 platform. Needs its rough opening and power before ceilings close. Also ties into the garage foam add-on decision.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c49"><div>
+      <div class="label">Photo-document every wall and ceiling cavity before foam</div>
+      <div class="meta"><span class="pill wait">Not started</span><span class="who">Stacey</span><span class="when">Day before foam</span></div>
+      <div class="note">Walk every room, wide shots + closeups of valve locations, blocking, wiring runs. Ten minutes of photos saves a drywall saw later and doubles as draw evidence.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c50"><div>
+      <div class="label">Pre-foam walkthrough: sign off plumbing, electrical, HVAC, blocking as final</div>
+      <div class="meta"><span class="pill wait">Not started</span><span class="who">Hunter + Stacey together</span><span class="when">Day before foam</span></div>
+      <div class="note">The literal checklist moment this document exists for. Anything missed here is buried.</div>
+    </div></li>
+  </ul>
+</section>
+
+<!-- ============ SECTION 4: INSULATION & DRYWALL ============ -->
+<section class="phase" id="s4">
+  <div class="phead">
+    <h2>4 · Insulation &amp; Drywall <span class="count"></span></h2>
+    <div class="gate"><b>Money gate:</b> Draw 7 ($52,000) releases when insulation + drywall are hung and finished. Line up the request the day drywall finishing starts.</div>
+  </div>
+  <ul class="items">
+    <li class="item" data-crit="1"><input type="checkbox" id="c60"><div>
+      <div class="label">Spray foam installed (roof deck R-20, exterior walls R-13)</div>
+      <div class="meta"><span class="pill wait">Awarded $7,479</span><span class="who">Foam Fitters</span><span class="when">After Section 3 = 100%</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c61"><div>
+      <div class="label">Foam add-on decisions recorded (garage roof/walls, sound walls, cold floor)</div>
+      <div class="meta"><span class="pill dec">Decision</span><span class="who">Hunter</span><span class="when">Before foam mobilizes</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c62"><div>
+      <div class="label">Drywall material decided and ordered (Red Barn 1722 $7,064.61 w/ Type X vs Thomas Supply re-quote)</div>
+      <div class="meta"><span class="pill dec">Decision</span><span class="who">Hunter</span><span class="when">Order during foam week</span></div>
+      <div class="note">Red Barn credit balance $7,443.59 would nearly cover their quote, cleanest use of the credit if their number holds. Confirm 5/8 Type X for garage common walls/ceiling stays on the order.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c63"><div>
+      <div class="label">Drywall labor committed (Julio Ortiz $10,862.40 sole bid, get one backup or commit)</div>
+      <div class="meta"><span class="pill dec">Decision</span><span class="who">Stacey vets + books · Hunter commits the money</span><span class="when">Book before foam so he follows it</span></div>
+      <div class="note">$0.73/SF hang + tape + float + orange peel, 14,880 SF; they supply mud/tape/corners, sheets are ours. Knockdown or stomp adds $0.20/SF.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c64"><div>
+      <div class="label">Drywall hung, taped, floated, textured</div>
+      <div class="meta"><span class="pill wait">Not started</span><span class="who">Julio Ortiz (pending)</span><span class="when">After foam</span></div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c65"><div>
+      <div class="label">Request Draw 7 ($52,000) with foam + drywall photos attached</div>
+      <div class="meta"><span class="pill crit">Cash gate</span><span class="who">Hunter</span><span class="when">The day finishing completes</span></div>
+      <div class="note">Start the paperwork early: committed balances outstanding are about $131K (see Money box) against an estimated $15-20K in the account, so Draw 7 timing matters more than any other draw so far.</div>
+    </div></li>
+  </ul>
+</section>
+
+<!-- ============ SECTION 5: INTERIOR FINISH ============ -->
+<section class="phase" id="s5">
+  <div class="phead">
+    <h2>5 · Interior Finish <span class="count"></span></h2>
+    <div class="gate">Trim, cabinets, tile, flooring, paint. <b>Gate:</b> cabinet and flooring lead times start ticking at drywall, order early or the house sits finished-empty.</div>
+  </div>
+  <ul class="items">
+    <li class="item" data-crit="1"><input type="checkbox" id="c70"><div>
+      <div class="label">Award the trim package: Pine View $27,425 bundle vs Caleb Ellison $15,840 labor (+ beams/ceilings)</div>
+      <div class="meta"><span class="pill dec">Decision</span><span class="who">Hunter + Stacey</span><span class="when">Before drywall finishes</span></div>
+      <div class="note">Scopes are not identical: Pine View bundles materials, ceilings, beams, T&amp;G, shelves, and closet build; Caleb's number is labor (doors, base, closets, windows) plus beams/ceilings, with materials likely ours. Get both on paper against the same scope sheet before deciding. Detailed stair with volute + transoms over interior doors is specialty work, confirm whoever wins actually wants it.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c71"><div>
+      <div class="label">Cabinets: turn Caleb's verbal ~$40K into a real quote with shop drawings</div>
+      <div class="meta"><span class="pill crit">Long lead</span><span class="pill dec">Decision</span><span class="who">Deanne designs · Stacey pushes Caleb · Hunter orders</span><span class="when">Order by drywall start</span></div>
+      <div class="note">Verify every appliance cutout against the 7-9-26 appliance schedule before fabrication (36&quot; fridge, 36&quot; cooktop, wall oven, dishwasher, microwave drawer, beverage center, freezer, washer/dryer surround). Confirm whether bath vanities are inside the $40K or separate ($7,000 budget line).</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c72"><div>
+      <div class="label">Stain color decision for T&amp;G, beams, and built-ins (samples: Rustic #116, Cedar Tone #101)</div>
+      <div class="meta"><span class="pill dec">Decision</span><span class="who">Deanne</span><span class="when">Now, porch T&amp;G is already up bare</span></div>
+      <div class="note">Also settles the open question of whether Total Effect's contract covers stain scope on the wood or only paint. Get that answered in writing before interior paint starts.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c73"><div>
+      <div class="label">Interior doors received (18 units, 3-panel shaker) + antique doors and transoms staged</div>
+      <div class="meta"><span class="pill wait">Ordered + paid 6-22</span><span class="who">Hunter</span><span class="when">Confirm ETA with Culpepper</span></div>
+      <div class="note">Also on hand from earlier: Etsy Farm Girl antique door, Magnolia diamond-panel French doors, custom transoms. Store flat, dry, and out of the trades' way until trim.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c74"><div>
+      <div class="label">Trim carpentry complete: base, case, crown, stair, ceilings, beams, interior T&amp;G, floating shelves, master closet</div>
+      <div class="meta"><span class="pill wait">Blocked by award</span><span class="who">Winner of trim decision</span><span class="when">After drywall</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c75"><div>
+      <div class="label">Interior paint: colors picked (2 interior colors in contract), then paint complete</div>
+      <div class="meta"><span class="pill dec">Colors not picked</span><span class="who">Deanne</span><span class="when">Colors by end of drywall</span></div>
+      <div class="note">Extra colors are an undisclosed upcharge, get the rate from Total Effect before adding a third color.</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c76"><div>
+      <div class="label">Flooring: confirm spec (engineered wood vs LVP), pick product, and order</div>
+      <div class="meta"><span class="pill crit">Selection</span><span class="pill dec">Decision</span><span class="who">Deanne picks · Hunter orders</span><span class="when">Order by drywall complete</span></div>
+      <div class="note">Budget carries $22,000 for main flooring. Hunter's understanding is engineered wood throughout with tile in wet areas; nothing is selected or bid. Wood needs 1-2 weeks acclimation on site plus installer lead, so this order lands right behind drywall. Decide carpet vs wood in bedrooms ($6,000 carpet line sitting unused).</div>
+    </div></li>
+    <li class="item" data-crit="1"><input type="checkbox" id="c77"><div>
+      <div class="label">Tile: select bath floors, shower walls, J&amp;J tub surround, kitchen backsplash + order + line up setter</div>
+      <div class="meta"><span class="pill crit">Selection</span><span class="pill dec">Decision</span><span class="who">Deanne picks · Hunter orders · Stacey books setter</span><span class="when">Select by drywall complete</span></div>
+      <div class="note">$14,000 budget, no bid yet. The J&amp;J tub surround is the schedule driver since that bathroom cannot finish without it.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c78"><div>
+      <div class="label">Countertops: quote, template after cabinets set, install (include outdoor kitchen tops)</div>
+      <div class="meta"><span class="pill wait">Not bid ($15,000 budget)</span><span class="who">Stacey finds fabricator · Hunter prices</span><span class="when">Template at cabinet install</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c79"><div>
+      <div class="label">Door hardware: knobs, levers, hinges, pulls picked and ordered for all 18+ doors</div>
+      <div class="meta"><span class="pill dec">Selection</span><span class="who">Deanne picks · Hunter orders</span><span class="when">Order by trim start</span></div>
+      <div class="note">Includes exterior locksets (front knotty alder, MDF exterior door, garage entries) and cabinet pulls, easy to forget until the trim crew asks.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c80"><div>
+      <div class="label">Appliances delivered and set (Pedigo package paid in full 2-26)</div>
+      <div class="meta"><span class="pill wait">Stored at Pedigo</span><span class="who">Stacey</span><span class="when">At cabinet completion</span></div>
+      <div class="note">Schedule delivery only when cabinets and flooring are ready; confirm the dual-fuel range gets both its gas stub and 240V.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c81"><div>
+      <div class="label">In-wall safe installed + garage attic lift installed</div>
+      <div class="meta"><span class="pill wait">Both on site / inbound</span><span class="who">Stacey</span><span class="when">After paint</span></div>
+    </div></li>
+  </ul>
+</section>
+
+<!-- ============ SECTION 6: MEP TRIM & UTILITIES ============ -->
+<section class="phase" id="s6">
+  <div class="phead">
+    <h2>6 · Mechanical Trim &amp; Utilities <span class="count"></span></h2>
+    <div class="gate">Fixtures on, lights on, air blowing, water running. <b>Gate:</b> permanent power must be in before HVAC startup.</div>
+  </div>
+  <ul class="items">
+    <li class="item"><input type="checkbox" id="c90"><div>
+      <div class="label">SHECO permanent service + meter set (URD meter pole, Order 21261)</div>
+      <div class="meta"><span class="pill wait">Orders placed, timing open</span><span class="who">Hunter</span><span class="when">Before HVAC startup</span></div>
+      <div class="note">Temp power is in. Note from the 5-19 audit: SHECO order estimates ($1,189.20) never matched bank charges ($1,375), clarify what is still owed when scheduling the set.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c91"><div>
+      <div class="label">Electrical trim: commit Joseph's $5,000 (or land the backup bid first) then trim out</div>
+      <div class="meta"><span class="pill dec">Decision, sole quote</span><span class="who">Stacey gets backup bid · Hunter commits</span><span class="when">Commit by drywall done</span></div>
+      <div class="note">Joseph's trim covers plugs, switches, smokes. Clarify light fixture install: the 65 Juno LED cans are owner-supplied with install noted as Joseph's, get the 4 Beacon Hill lanterns and any fans/pendants into the same scope conversation.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c92"><div>
+      <div class="label">Decorative lighting picked and ordered: ceiling fans, pendants, vanity lights, dining fixture</div>
+      <div class="meta"><span class="pill dec">Selection</span><span class="who">Deanne picks · Hunter orders</span><span class="when">Order by electrical trim</span></div>
+      <div class="note">$5,391.96 of the $6,000 lighting budget is already spent on cans + lanterns, so decorative fixtures need a number. Cans and lanterns are on hand.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c93"><div>
+      <div class="label">Plumbing fixture set: toilets, lavs, kitchen farm sink, trim on all valves, tub set</div>
+      <div class="meta"><span class="pill wait">In Eddie's $9,160 quote</span><span class="who">Eddie Cross</span><span class="when">After counters + flooring</span></div>
+      <div class="note">Farm sink must be on site before countertop template. Toilets, lav faucets, and accessories still need selecting; trim kits should already match the rough valves bought in Section 1.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c94"><div>
+      <div class="label">Rheem RTEX-27 tankless water heater installed + wired</div>
+      <div class="meta"><span class="pill wait">Unit on site</span><span class="who">Eddie + Joseph</span><span class="when">At trim</span></div>
+      <div class="note">27kW electric draws serious amperage; Joseph's load calc (5-13-26) accounted for it, keep it on his trim punch.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c95"><div>
+      <div class="label">Master freestanding tub delivered and set</div>
+      <div class="meta"><span class="pill wait">Blocked by model pick</span><span class="who">Deanne + Eddie</span><span class="when">At trim, after flooring</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c96"><div>
+      <div class="label">HVAC trim, startup, and balance</div>
+      <div class="meta"><span class="pill wait">Contract signed</span><span class="who">Ferrara's</span><span class="when">After permanent power</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c97"><div>
+      <div class="label">Shower glass measured and ordered after tile, then installed</div>
+      <div class="meta"><span class="pill wait">Not started</span><span class="who">Hunter orders · Stacey books install</span><span class="when">Measure at tile complete, 2-3 wk lead</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c98"><div>
+      <div class="label">Mirrors, bath accessories, closet rods/shelving installed</div>
+      <div class="meta"><span class="pill wait">Not started</span><span class="who">Trim crew</span><span class="when">End of trim</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c99"><div>
+      <div class="label">Confirm the gas plan: LP tank (or supply source) sized and set for range + outdoor grill</div>
+      <div class="meta"><span class="pill dec">Open question</span><span class="who">Hunter + Eddie</span><span class="when">Before appliance hookup</span></div>
+      <div class="note">Eddie's stub covers the range at the wall. Nothing in the file shows who supplies the gas itself (propane tank, lease vs buy, line to the outdoor kitchen). Close this before the cooktop and grill expect fuel.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c100"><div>
+      <div class="label">Outdoor kitchen appliances installed (grill, fridge, combo drawers, sink)</div>
+      <div class="meta"><span class="pill wait">Blocked by order</span><span class="who">Stacey</span><span class="when">After stone + counters</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c101"><div>
+      <div class="label">Septic system installed and connected (4A Septic, $4,900 balance)</div>
+      <div class="meta"><span class="pill wait">Deposit paid 2-5</span><span class="who">Stacey schedules 4A</span><span class="when">Schedule now for pre-landscaping</span></div>
+      <div class="note">4A needs water available on site for tank install, and one stubout is included (extras $350 each). Call (936) 433-6444 to get on their calendar; this one has been quiet since February.</div>
+    </div></li>
+  </ul>
+</section>
+
+<!-- ============ SECTION 7: SITE WORK & CLOSEOUT ============ -->
+<section class="phase" id="s7">
+  <div class="phead">
+    <h2>7 · Site Work &amp; Closeout <span class="count"></span></h2>
+    <div class="gate">Per Hunter: driveway, landscaping, and yard come at the end. Sequence: septic + flatwork first, then drive, then grade and sod, then punch.</div>
+  </div>
+  <ul class="items">
+    <li class="item"><input type="checkbox" id="c110"><div>
+      <div class="label">Exterior flatwork: sidewalks / patio / porch aprons bid and poured</div>
+      <div class="meta"><span class="pill wait">Not bid ($15,000 budget)</span><span class="who">Stacey bids it</span><span class="when">Before driveway</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c111"><div>
+      <div class="label">Driveway: decide gravel vs concrete, bid, install</div>
+      <div class="meta"><span class="pill dec">Decision</span><span class="who">Hunter + Deanne</span><span class="when">End of project</span></div>
+      <div class="note">$5,000 base budget. If concrete, pour before final grade; either way keep heavy trades (septic, stone) off it once done.</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c112"><div>
+      <div class="label">Final grade, sod/seed, basic plantings</div>
+      <div class="meta"><span class="pill wait">Not bid ($8,000 budget)</span><span class="who">Stacey bids it</span><span class="when">Last major scope</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c113"><div>
+      <div class="label">Punch list walk with Deanne, then punch complete</div>
+      <div class="meta"><span class="pill wait">Not started</span><span class="who">All three</span><span class="when">Closeout</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c114"><div>
+      <div class="label">Final clean + drone finish footage</div>
+      <div class="meta"><span class="pill wait">Not started</span><span class="who">Stacey</span><span class="when">Closeout</span></div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c115"><div>
+      <div class="label">Collect warranties + closeout docs into the project folder</div>
+      <div class="meta"><span class="pill wait">Ongoing</span><span class="who">Hunter</span><span class="when">Closeout</span></div>
+      <div class="note">Distinctive roof warranty, C&amp;H 2-yr install, Ferrara equipment registration, foam cert, septic license paperwork, appliance registrations, lien releases from the big subs (Munson, Ramos, Distinctive, Ferrara).</div>
+    </div></li>
+    <li class="item"><input type="checkbox" id="c116"><div>
+      <div class="label">Money cleanup: Red Barn credit ($7,443.59 apply vs refund), reimburse Deanne the Etsy door ($2,022.91), Joseph's corrected invoice, remaining draws 8-12</div>
+      <div class="meta"><span class="pill wait">Open</span><span class="who">Hunter</span><span class="when">Rolling</span></div>
+    </div></li>
+  </ul>
+</section>
+
+<!-- ============ SELECTIONS BOARD ============ -->
+<section class="phase" id="selections">
+  <div class="phead">
+    <h2>Selections Board: what to pick and when <span class="count"></span></h2>
+    <div class="gate">Every selection, one place, ordered by deadline. "Deadline" is the point where not having it starts costing schedule.</div>
+  </div>
+  <div class="cardpad" style="overflow-x:auto">
+    <table>
+      <thead><tr><th>Selection</th><th>Who picks</th><th>Deadline</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><b>Shower/tub valves + trim kits</b> (all baths)</td><td>Deanne + Hunter</td><td><b>NOW</b>, before top-out</td><td>Not picked</td></tr>
+        <tr><td><b>Jack &amp; Jill drop-in tub</b></td><td>Deanne + Hunter</td><td><b>NOW</b>, set before foam</td><td>Not picked</td></tr>
+        <tr><td><b>Master freestanding tub + floor filler</b> (spec)</td><td>Deanne</td><td><b>NOW</b>, drain set at top-out</td><td>Not picked</td></tr>
+        <tr><td><b>Outdoor kitchen appliances</b> (Bull units per drawings)</td><td>Hunter</td><td><b>NOW</b>, cutouts + stone date depend on it</td><td>Not ordered</td></tr>
+        <tr><td><b>Stain color</b> for T&amp;G / beams (Rustic #116 vs Cedar Tone #101)</td><td>Deanne</td><td>Now, porch wood is up bare</td><td>Samples in hand</td></tr>
+        <tr><td><b>Handrail design</b> (wood vs metal)</td><td>Deanne + Hunter</td><td>Now if metal (fab lead time)</td><td>Not picked</td></tr>
+        <tr><td><b>Garage overhead doors</b></td><td>Deanne + Hunter</td><td>Order by drywall</td><td>Not bid</td></tr>
+        <tr><td><b>Cabinet design + shop drawings</b></td><td>Deanne + Caleb</td><td>Order by drywall start</td><td>Verbal only</td></tr>
+        <tr><td><b>Interior paint colors</b> (2 in contract)</td><td>Deanne</td><td>By end of drywall</td><td>Not picked</td></tr>
+        <tr><td><b>Flooring product</b> (engineered wood, confirm)</td><td>Deanne + Hunter</td><td>Order by drywall complete</td><td>Not picked</td></tr>
+        <tr><td><b>Tile</b> (baths, J&amp;J surround, backsplash)</td><td>Deanne</td><td>By drywall complete</td><td>Not picked</td></tr>
+        <tr><td><b>Carpet vs wood in bedrooms</b></td><td>Deanne</td><td>With flooring order</td><td>Open</td></tr>
+        <tr><td><b>Door hardware / knobs / pulls</b></td><td>Deanne</td><td>Order by trim start</td><td>Not picked</td></tr>
+        <tr><td><b>Countertop slabs</b> (kitchen, baths, outdoor)</td><td>Deanne</td><td>At cabinet order</td><td>Not picked</td></tr>
+        <tr><td><b>Decorative lighting</b> (fans, pendants, vanity)</td><td>Deanne</td><td>Order by electrical trim</td><td>Not picked</td></tr>
+        <tr><td><b>Toilets, lav faucets, kitchen faucet, farm sink</b></td><td>Deanne</td><td>Sink before counter template; rest by plumbing trim</td><td>Not picked</td></tr>
+        <tr><td><b>Gutter color</b></td><td>Hunter</td><td>At roof completion</td><td>Not picked</td></tr>
+        <tr><td><b>Shower glass</b></td><td>Deanne</td><td>Measure after tile</td><td>Later</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ MONEY BOX ============ -->
+<section class="phase" id="money">
+  <div class="phead">
+    <h2>Money Box <span class="count"></span></h2>
+    <div class="gate">Committed contracts and what is still owed on them, plus quotes not yet committed. Numbers from the Budget Tracker reconciled through 7-15-26 and the 7-27 Tri-Supply audit.</div>
+  </div>
+  <div class="cardpad grid2">
+    <div>
+      <table>
+        <thead><tr><th>Committed, balance due</th><th class="num">Owed</th></tr></thead>
+        <tbody>
+          <tr><td>Wayne Munson stone (material + labor, $2,500 paid)</td><td class="num">$50,556.08</td></tr>
+          <tr><td>Ferrara's HVAC (signed, nothing paid)</td><td class="num">$26,600.00</td></tr>
+          <tr><td>Distinctive Roofing 40% at completion</td><td class="num">$18,800.00</td></tr>
+          <tr><td>Total Effect Painting balance</td><td class="num">$14,457.00</td></tr>
+          <tr><td>Ramos framing final draw</td><td class="num">$8,588.00</td></tr>
+          <tr><td>Foam Fitters base scope</td><td class="num">$7,479.00</td></tr>
+          <tr><td>4A Septic balance</td><td class="num">$4,900.00</td></tr>
+          <tr class="total"><td>Committed balances</td><td class="num">$131,380.08</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <table>
+        <thead><tr><th>Quoted, not committed</th><th class="num">Quote</th></tr></thead>
+        <tbody>
+          <tr><td>Eddie Cross next rough + gas + fixture set</td><td class="num">$9,160.00</td></tr>
+          <tr><td>Julio Ortiz drywall labor (sole bid)</td><td class="num">$10,862.40</td></tr>
+          <tr><td>Red Barn drywall material (vs Thomas Supply)</td><td class="num">$7,064.61</td></tr>
+          <tr><td>Joseph Electric trim (sole quote)</td><td class="num">$5,000.00</td></tr>
+          <tr><td>Pine View trim bundle (vs Caleb)</td><td class="num">$27,425.00</td></tr>
+          <tr><td>Caleb Ellison cabinets ~$40K + trim $15,840 (verbal)</td><td class="num">~$55,840</td></tr>
+        </tbody>
+      </table>
+      <table style="margin-top:14px">
+        <thead><tr><th>Cash position</th><th class="num"></th></tr></thead>
+        <tbody>
+          <tr><td>Draws received (6 of 12)</td><td class="num">$358,500</td></tr>
+          <tr><td>Bank balance at last full reconciliation (6-2-26)</td><td class="num">$47,639.74</td></tr>
+          <tr><td>Booked spend since 6-2 (est.)</td><td class="num">~$30,600</td></tr>
+          <tr class="total"><td>Estimated cash on hand (verify vs bank)</td><td class="num">~$17,000</td></tr>
+          <tr><td>Draw 7 at foam + drywall complete</td><td class="num">$52,000</td></tr>
+          <tr><td>Draws 7-12 remaining</td><td class="num">$291,500</td></tr>
+          <tr><td>Red Barn credit on account</td><td class="num">+$7,443.59</td></tr>
+          <tr><td>Owed to Deanne (Etsy door reimbursement)</td><td class="num">$2,022.91</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTS ============ -->
+<section class="phase" id="contacts">
+  <div class="phead"><h2>Who to Call <span class="count"></span></h2></div>
+  <div class="contacts">
+    <div class="vcard"><b>Eddie Cross Plumbing</b><span>Plumbing rough + trim</span><span>Number in Hunter's phone</span></div>
+    <div class="vcard"><b>Ferrara's HVAC, Michael Lewis</b><span>HVAC system + install</span><span>(936) 639-5259</span></div>
+    <div class="vcard"><b>Foam Fitters, Kenneth</b><span>Spray foam</span><span>(936) 494-8595</span></div>
+    <div class="vcard"><b>Distinctive Roofing, Pam Pinkerton</b><span>Standing seam roof</span><span>817-560-6679 · pampinkerton@distinctiveroofing.com</span></div>
+    <div class="vcard"><b>Wayne Munson</b><span>Stone: wainscot, fireplace, columns</span><span>Via Stacey</span></div>
+    <div class="vcard"><b>Ramos Framing</b><span>Framing, decks, cornice</span><span>Via Stacey</span></div>
+    <div class="vcard"><b>Joseph Electric</b><span>Electrical rough + trim</span><span>Number in Hunter's phone</span></div>
+    <div class="vcard"><b>Julio Ortiz Home Construction</b><span>Drywall (quoted)</span><span>936-933-0590 · emanuelortiz8678@gmail.com</span></div>
+    <div class="vcard"><b>Pine View Construction</b><span>Trim (quoted)</span><span>pineviewllcff@gmail.com</span></div>
+    <div class="vcard"><b>Caleb Ellison</b><span>Cabinets + trim (verbal)</span><span>Via Stacey</span></div>
+    <div class="vcard"><b>Total Effect Painting</b><span>Interior + exterior paint</span><span>(936) 499-6813 · Totaleffectsco@gmail.com</span></div>
+    <div class="vcard"><b>Tri-Supply, Micheal Culpepper</b><span>Windows, doors, lanterns</span><span>(936) 444-6256 · meculpepper@trisupply.net</span></div>
+    <div class="vcard"><b>4A Septic</b><span>Septic install</span><span>(936) 433-6444</span></div>
+    <div class="vcard"><b>C&amp;H American Systems</b><span>Panoramic door install (done)</span><span>(713) 827-8899 · office@chamersys.com</span></div>
+    <div class="vcard"><b>Red Barn, Mitchell</b><span>Lumber + materials, $7,443.59 credit</span><span>Livingston yard</span></div>
+    <div class="vcard"><b>Pedigo Furniture, Allison</b><span>Appliances (paid, awaiting delivery)</span><span>936-967-2600</span></div>
+    <div class="vcard"><b>SHECO</b><span>Electric co-op, permanent service</span><span>Orders 21260 / 21261</span></div>
+    <div class="vcard"><b>T4 Resources</b><span>Dirt work, dumpsters</span><span>Via Hunter</span></div>
+  </div>
+</section>
+
+<footer>
+  327 Easy Street Build Tracker · maintained by Hunter Haley · built from the project folder, budget tracker (through 7-15-26), vendor quotes, and the 7-27-26 Tri-Supply audit.<br>
+  To update: text Hunter what changed, or check boxes and hit Copy My Updates and send him the text.
+</footer>
+
+</div>
+<div class="toast" id="toast">Copied</div>
+<script>
+(function(){
+  var items = Array.prototype.slice.call(document.querySelectorAll('li.item'));
+  function refresh(){
+    var done=0;
+    items.forEach(function(li){
+      var cb=li.querySelector('input[type=checkbox]');
+      li.classList.toggle('done', cb.checked);
+      if(cb.checked) done++;
+    });
+    document.querySelectorAll('section.phase').forEach(function(sec){
+      var lis=sec.querySelectorAll('li.item'); if(!lis.length){var c=sec.querySelector('.count'); if(c)c.textContent=''; return;}
+      var d=sec.querySelectorAll('li.item input:checked').length;
+      var c=sec.querySelector('.count'); if(c)c.textContent=d+' of '+lis.length+' done';
+    });
+    var pct=items.length?Math.round(done/items.length*100):0;
+    document.getElementById('pbar').style.width=pct+'%';
+    document.getElementById('plabel').textContent=done+' of '+items.length+' items complete ('+pct+'%). Sections 1 and 3 are the critical path this week.';
+  }
+  items.forEach(function(li){ li.querySelector('input').addEventListener('change', refresh); });
+
+  var current='all';
+  document.getElementById('filters').addEventListener('click', function(e){
+    var b=e.target.closest('button.chip'); if(!b||b.id==='copyupdates') return;
+    document.querySelectorAll('#filters .chip').forEach(function(c){c.classList.remove('active')});
+    b.classList.add('active'); current=b.dataset.filter; applyFilter();
+  });
+  function applyFilter(){
+    items.forEach(function(li){
+      var cb=li.querySelector('input'); var show=true;
+      if(current==='open') show=!cb.checked;
+      else if(current==='done') show=cb.checked;
+      else if(current==='crit') show=li.dataset.crit==='1';
+      li.classList.toggle('hidden',!show);
+    });
+    document.querySelectorAll('section.phase').forEach(function(sec){
+      var lis=sec.querySelectorAll('li.item'); if(!lis.length) return;
+      var vis=sec.querySelectorAll('li.item:not(.hidden)').length;
+      sec.classList.toggle('hidden', vis===0);
+    });
+  }
+
+  document.getElementById('copyupdates').addEventListener('click', function(){
+    var lines=[];
+    items.forEach(function(li){
+      var cb=li.querySelector('input');
+      var base=li.dataset.base==='1';
+      if(cb.checked!==base){
+        lines.push((cb.checked?'DONE: ':'REOPENED: ')+li.querySelector('.label').textContent.trim());
+      }
+    });
+    var msg = lines.length ? ('327 Easy St tracker update ('+new Date().toLocaleDateString()+'):\n'+lines.join('\n')) : 'No changes checked yet. Check off what got done, then hit Copy My Updates again.';
+    function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},2200);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(msg).then(function(){toast(lines.length?'Update copied. Text it to Hunter.':'Nothing new checked yet.');},function(){fallback();});
+    } else { fallback(); }
+    function fallback(){
+      var ta=document.createElement('textarea');ta.value=msg;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');toast('Update copied. Text it to Hunter.');}catch(e){toast('Could not copy. Screenshot instead.');}
+      document.body.removeChild(ta);
+    }
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>
