@@ -45,21 +45,28 @@
   .howto.now{border-left-color:var(--crit)}
   .howto b{color:var(--head)}
 
-  /* filter bars */
-  nav.filters{position:sticky;top:0;z-index:60;background:var(--bg);padding:9px 0 8px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  /* filter bar: compact sticky strip, panel opens under it */
+  nav.filters{position:sticky;top:0;z-index:60;background:var(--bg);border-bottom:1px solid var(--line);margin-bottom:12px}
+  .fbar{display:flex;align-items:center;gap:8px;padding:8px 0}
+  .fbtn{flex:0 0 auto;border:1px solid var(--head);background:var(--head);color:var(--bg);border-radius:99px;padding:8px 15px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+  .fbtn .arrow{display:inline-block;margin-left:5px;font-size:11px;transform:rotate(0deg);transition:transform .2s}
+  nav.filters.panelopen .fbtn .arrow{transform:rotate(180deg)}
+  .fsummary{flex:1;min-width:0;font-size:12.5px;color:var(--muted);line-height:1.3}
+  .fsummary b{color:var(--ink);font-weight:650}
+  .fclear{flex:0 0 auto;border:1px solid var(--accent);background:var(--card);color:var(--accent);border-radius:99px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:none}
+  .fclear.show{display:block}
+
+  .fpanel{display:none;padding:2px 0 11px;max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  nav.filters.panelopen .fpanel{display:block}
   .frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-  .frow+.frow{margin-top:7px;padding-top:7px;border-top:1px dashed var(--line)}
-  .flabel{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:750;width:100%;margin-bottom:1px}
-  .chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 13px;font-size:13.5px;cursor:pointer;font-weight:550;white-space:nowrap}
+  .frow+.frow{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+  .flabel{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:750;width:100%;margin-bottom:2px}
+  .chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:7px 13px;font-size:13.5px;cursor:pointer;font-weight:550;white-space:nowrap;font-family:inherit}
   .chip:hover{border-color:var(--accent)}
   .chip.active{background:var(--head);color:var(--bg);border-color:var(--head)}
-  .chip .c{opacity:.65;font-size:12px;margin-left:3px}
   .chip.reset{border-color:var(--accent);color:var(--accent);font-weight:700}
   .chip.copybtn{border-color:var(--done);color:var(--done);font-weight:700}
-  .toolrow{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-
-  .filternote{font-size:13px;color:var(--muted);margin:10px 0 0;display:none}
-  .filternote.show{display:block}
+  .toolrow{display:flex;gap:6px;margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);flex-wrap:wrap}
 
   /* sections */
   section.phase{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden;box-shadow:var(--shadow)}
@@ -69,6 +76,7 @@
   .ptext{flex:1;min-width:0}
   .phead h2{margin:0;font-size:17px;color:var(--head);display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
   .phead .count{font-size:12px;color:var(--muted);font-weight:500;background:var(--pill);border-radius:99px;padding:2px 8px}
+  .phead .count:empty{display:none}
   .phead .gate{margin-top:4px;font-size:13px;color:var(--muted)}
   .phead .gate b{color:var(--crit);font-weight:650}
   .pbody{display:none;border-top:1px solid var(--line)}
@@ -105,12 +113,30 @@
   .vcard span{color:var(--muted);display:block}
   .vcard a{color:var(--accent);text-decoration:none}
 
+  /* stack the selections table into cards on a phone */
+  @media(max-width:640px){
+    #selections table thead{display:none}
+    #selections table,#selections tbody,#selections tr,#selections td{display:block;width:100%}
+    #selections tr{border-bottom:2px solid var(--line);padding:9px 0 7px}
+    #selections tr:last-child{border-bottom:none}
+    #selections td{border:none;padding:2px 2px 2px 0;display:flex;gap:9px;align-items:baseline}
+    #selections td::before{flex:0 0 68px;font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+    #selections td:nth-child(1)::before{content:"Item"}
+    #selections td:nth-child(2)::before{content:"Who"}
+    #selections td:nth-child(3)::before{content:"When"}
+    #selections td:nth-child(4)::before{content:"Status"}
+    #selections td:nth-child(1){font-size:14.5px;margin-bottom:2px}
+    .snap{gap:8px}
+    .tile{padding:10px}
+    .cardpad{padding:10px 12px}
+  }
   footer{margin-top:26px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6}
   .hidden{display:none!important}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--head);color:var(--bg);border-radius:9px;padding:11px 19px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:99;max-width:90vw;text-align:center}
   .toast.show{opacity:1}
-  .totop{position:fixed;bottom:18px;right:16px;background:var(--head);color:var(--bg);border:none;border-radius:99px;padding:10px 15px;font-size:13px;font-weight:650;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s;z-index:70}
-  .totop.show{opacity:.92;pointer-events:auto}
+  .totop{position:fixed;bottom:14px;right:12px;background:var(--head);color:var(--bg);border:none;border-radius:99px;padding:7px 12px;font-size:11.5px;font-weight:650;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s;z-index:70;font-family:inherit}
+  .totop.show{opacity:.8;pointer-events:auto}
+  .totop:hover{opacity:1}
   @media print{
     nav.filters,.copybtn,.toast,.totop,.snap,.tile{display:none!important}
     body{background:#fff;color:#000;font-size:11.5px}
@@ -145,7 +171,14 @@
   <b>Where we stand today:</b> framing is complete including both porches and the Trex decks, the fireplace is stoned to the roofline, and the standing seam metal roof is going on right now. The moment the roof is dried in the chain is: plumbing top-out with every valve, then HVAC rough, then spray foam, then the Jack &amp; Jill tub drops into its framed cavity, then drywall. Nothing on that chain is scheduled yet and the fixture selections feed all of it. Exterior stone is waiting on the supplier, and the outdoor kitchen has to be framed before the masons come back.
 </div>
 
+<div id="navanchor" aria-hidden="true"></div>
 <nav class="filters" id="filters">
+  <div class="fbar">
+    <button class="fbtn" id="filtertoggle">Filters <span class="arrow">▼</span></button>
+    <div class="fsummary" id="fsummary">Showing <b>everything</b></div>
+    <button class="fclear" id="clearbtn">Clear</button>
+  </div>
+  <div class="fpanel" id="fpanel">
   <div class="frow" data-group="view">
     <span class="flabel">Show me</span>
     <button class="chip active" data-view="all">Everything</button>
@@ -181,7 +214,7 @@
     <button class="chip" id="collapseall">Close all sections</button>
     <button class="chip copybtn" id="copyupdates">Copy My Updates</button>
   </div>
-  <div class="filternote" id="filternote"></div>
+  </div>
 </nav>
 
 <!-- ===== 1 ===== -->
@@ -787,15 +820,30 @@
     document.getElementById('pbar').style.width = pct+'%';
     document.getElementById('plabel').textContent = doneAll+' of '+items.length+' items complete ('+pct+'%)';
 
-    var note = document.getElementById('filternote');
+    var sum = document.getElementById('fsummary');
+    var clr = document.getElementById('clearbtn');
     if(filtering){
       var shown = items.filter(function(l){return !l.classList.contains('hidden');}).length;
-      note.textContent = 'Showing: '+VIEWNAME[view]+(trade!=='all' ? ' · '+TRADENAME[trade] : '')+' ('+shown+' item'+(shown===1?'':'s')+'). Tap "Show everything again" to clear.';
-      note.classList.add('show');
+      var bits = [];
+      if(view!=='all') bits.push(VIEWNAME[view]);
+      if(trade!=='all') bits.push(TRADENAME[trade]);
+      sum.innerHTML = 'Showing <b>'+bits.join(' · ')+'</b> ('+shown+' item'+(shown===1?'':'s')+')';
+      clr.classList.add('show');
     } else {
-      note.classList.remove('show');
+      sum.innerHTML = 'Showing <b>everything</b>';
+      clr.classList.remove('show');
     }
   }
+
+  var nav = document.getElementById('filters');
+  function panelOpen(on){ nav.classList.toggle('panelopen', on); }
+  function isPhone(){ return window.matchMedia('(max-width:760px)').matches; }
+  document.getElementById('filtertoggle').addEventListener('click', function(){
+    panelOpen(!nav.classList.contains('panelopen'));
+  });
+  document.getElementById('clearbtn').addEventListener('click', function(){
+    document.getElementById('resetall').click();
+  });
 
   // section open/close
   sections.forEach(function(sec){
@@ -821,7 +869,18 @@
     b.classList.add('active');
     if(group==='view') view = b.dataset.view; else trade = b.dataset.trade;
     apply(); syncTogs();
+    if(isPhone()){ panelOpen(false); landOnResults(); }
   });
+
+  // true document position of the bar; nav.offsetTop lies once the bar is stuck
+  var anchor = document.getElementById('navanchor');
+  function navTop(){ return anchor.getBoundingClientRect().top + window.scrollY; }
+
+  // put the sticky bar at the top of the screen so results start right under it
+  function landOnResults(){
+    var top = navTop();
+    if(window.scrollY < top) window.scrollTo({top:top, behavior:'smooth'});
+  }
 
   function setView(v){
     view = v;
@@ -829,7 +888,8 @@
       c.classList.toggle('active', c.dataset.view===v);
     });
     apply(); syncTogs();
-    document.getElementById('filters').scrollIntoView({block:'start'});
+    panelOpen(false);
+    window.scrollTo({top:navTop(), behavior:'smooth'});
   }
 
   // snapshot tiles
@@ -843,6 +903,7 @@
     document.querySelectorAll('.frow[data-group=trade] .chip').forEach(function(c){c.classList.toggle('active', c.dataset.trade==='all')});
     sections.forEach(function(s,i){ s.classList.toggle('open', i===0); });
     apply(); syncTogs();
+    panelOpen(false);
     window.scrollTo({top:0});
   });
   document.getElementById('expandall').addEventListener('click', function(){
@@ -885,11 +946,19 @@
   });
 
   var totop = document.getElementById('totop');
+  var autoFolded = false;
   window.addEventListener('scroll', function(){
-    totop.classList.toggle('show', window.scrollY > 700);
-  });
+    var y = window.scrollY, top = navTop();
+    totop.classList.toggle('show', y > 700);
+    if(isPhone()) return;
+    // fold the panel once you scroll past it, so the sticky bar stays a thin strip
+    if(y > top + 60 && !autoFolded && nav.classList.contains('panelopen')){
+      panelOpen(false); autoFolded = true;
+    }
+  }, {passive:true});
   totop.addEventListener('click', function(){ window.scrollTo({top:0,behavior:'smooth'}); });
 
+  if(!isPhone()) panelOpen(true);
   apply(); syncTogs();
 })();
 </script>
